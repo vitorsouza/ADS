@@ -1,0 +1,112 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/resources/templates/decorator.xhtml">
+
+	<!-- Title section. -->
+	<ui:define name="title"><h:outputText value="#{msgs['manageAmbulances.title.status']}" /></ui:define>
+
+	<!-- Body section. -->
+	<ui:define name="body">
+		<h1><h:outputText value="#{msgs['manageAmbulances.title.status']}" /></h1>
+
+		<!-- A table showing information on the selected ambulance's status. -->
+		<ui:decorate template="/resources/templates/form.xhtml">
+			<h:form id="status">
+				<ui:decorate template="/resources/templates/formfield.xhtml">
+					<ui:define name="label"><h:outputText value="#{msgs['manageAmbulances.text.ambulanceNumber']}" /></ui:define>
+					<h:outputText value="#{manageAmbulancesAction.selectedEntity.number}" />
+				</ui:decorate>
+				<ui:decorate template="/resources/templates/formfield.xhtml">
+					<ui:define name="label"><h:outputText value="#{msgs['manageAmbulances.form.licensePlate']}" /></ui:define>
+					<h:outputText value="#{manageAmbulancesAction.selectedEntity.licensePlate}" />
+				</ui:decorate>
+				<ui:decorate template="/resources/templates/formfield.xhtml">
+					<ui:define name="label"><h:outputText value="#{msgs['manageAmbulances.text.currentStatus']}" /></ui:define>
+					<h:outputText value="#{msgs['manageAmbulances.text.status.active']}" rendered="#{manageAmbulancesAction.active}" />
+					<h:outputText value="#{msgs['manageAmbulances.text.status.inactive']}" rendered="#{not manageAmbulancesAction.active}" />
+				</ui:decorate>
+			</h:form>
+		</ui:decorate>
+
+		<hr />
+
+		<p>
+			<h:outputText value="#{msgs['manageAmbulances.text.activeDeactivationInstructions']}" rendered="#{manageAmbulancesAction.active}" />
+			<h:outputText value="#{msgs['manageAmbulances.text.inactiveDeactivationInstructions']}" rendered="#{not manageAmbulancesAction.active}" />
+		</p>
+
+		<!-- A form that allows the admin to change the status of the current ambulance (i.e. start a deactivation or close the current one). -->
+		<ui:decorate template="/resources/templates/form.xhtml">
+			<h:form id="form">
+				<h:panelGroup id="beginDateField">
+					<ui:decorate template="/resources/templates/formfield.xhtml">
+						<ui:param name="fieldName" value="form:beginDate" />
+						<ui:define name="label"><h:outputText value="#{msgs['manageAmbulances.form.deactivation.beginDate']}" /></ui:define>
+						<h:inputText id="beginDate" value="#{manageAmbulancesAction.currentDeactivation.beginDate}" size="10" required="true" disabled="true">
+							<f:convertDateTime dateStyle="medium" />
+						</h:inputText>
+					</ui:decorate>
+				</h:panelGroup>
+				<h:panelGroup id="reasonField">
+					<ui:decorate template="/resources/templates/formfield.xhtml">
+						<ui:param name="fieldName" value="form:reason" />
+						<ui:define name="label"><h:outputText value="#{msgs['manageAmbulances.form.deactivation.reason']}" /></ui:define>
+						<h:inputText id="reason" value="#{manageAmbulancesAction.currentDeactivation.reason}" size="70" disabled="#{not manageAmbulancesAction.active}" />
+					</ui:decorate>
+				</h:panelGroup>
+
+				<ui:decorate template="/resources/templates/formbutton.xhtml">
+					<h:commandButton action="#{manageAmbulancesAction.list}" value="#{msgs['manageAmbulances.button.back']}" immediate="true" />
+					<h:commandButton action="#{manageAmbulancesAction.changeStatus}" value="#{manageAmbulancesAction.active ? msgs['manageAmbulances.button.deactivate'] : msgs['manageAmbulances.button.endDeactivation']}" />
+				</ui:decorate>
+			</h:form>
+		</ui:decorate>
+
+		<hr />
+
+		<h:form id="history">
+			<div class="crud">
+				<!-- While the deactivation history is not yet loaded, show a message and a button that allows the admin to load it. -->
+				<h:panelGroup rendered="#{manageAmbulancesAction.allDeactivations == null}">
+					<p align="center"><h:outputText value="#{msgs['manageAmbulances.text.deactivationHistoryInstructions']}" /></p>
+					<p align="center"><h:commandButton action="#{manageAmbulancesAction.viewDeactivationHistory}" value="#{msgs['manageAmbulances.button.viewDeactivationHistory']}"><f:ajax render="history" /></h:commandButton></p>
+				</h:panelGroup>
+
+				<h:panelGroup rendered="#{manageAmbulancesAction.allDeactivations != null}">
+					<h2><h:outputText value="#{msgs['manageAmbulances.title.deactivationHistory']}" /></h2>
+
+					<!-- Message shown when no entities have been found. -->
+					<h:panelGroup rendered="#{empty manageAmbulancesAction.allDeactivations}">
+						<div class="infoDialog"><h:outputText value="#{msgs['manageAmbulances.text.noDeactivations']}" /></div>
+					</h:panelGroup>
+
+					<!-- The listing of deactivations. -->
+					<h:panelGroup rendered="#{not empty manageAmbulancesAction.allDeactivations}">
+						<h:dataTable value="#{manageAmbulancesAction.allDeactivations}" var="entity" styleClass="crudList" rowClasses="odd,even" columnClasses="colMC,colMC,colLL">
+							<h:column>
+								<f:facet name="header"><h:outputText value="#{msgs['manageAmbulances.form.deactivation.beginDate']}" /></f:facet>
+								<h:outputText value="#{entity.beginDate}">
+									<f:convertDateTime dateStyle="medium" />
+								</h:outputText>
+							</h:column>
+							<h:column>
+								<f:facet name="header"><h:outputText value="#{msgs['manageAmbulances.form.deactivation.endDate']}" /></f:facet>
+								<h:outputText value="#{entity.endDate}">
+									<f:convertDateTime dateStyle="medium" />
+								</h:outputText>
+							</h:column>
+							<h:column>
+								<f:facet name="header"><h:outputText value="#{msgs['manageAmbulances.form.deactivation.reason']}" /></f:facet>
+								<h:outputText value="#{entity.reason}" />
+							</h:column>
+						</h:dataTable>
+					</h:panelGroup>
+				</h:panelGroup>
+			</div>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

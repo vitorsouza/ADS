@@ -1,0 +1,49 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+			xmlns:ui="http://java.sun.com/jsf/facelets"
+			xmlns:f="http://java.sun.com/jsf/core"
+			xmlns:h="http://java.sun.com/jsf/html">
+	<ui:composition>
+		<h1><h:outputText value="#{msgs['global.title.welcome']}" /></h1>
+
+		<p><h:outputText value="#{msgs['global.text.welcome']}" /></p>
+
+		<!-- Login form, shown when the user is not logged in. -->
+		<h:panelGroup rendered="#{sessionController.currentUser == null}">
+			<p><h:outputText value="#{msgs['global.text.loginInstructions']}" /></p>
+
+			<ui:decorate template="/resources/templates/form.xhtml">
+				<h:form id="login">
+					<ui:decorate template="/resources/templates/formfield.xhtml">
+						<ui:param name="fieldName" value="login:username" />
+						<ui:define name="label"><h:outputText value="#{msgs['global.form.username']}" /></ui:define>
+						<h:inputText id="username" value="#{sessionController.username}" size="10" required="true" />
+					</ui:decorate>
+					<ui:decorate template="/resources/templates/formfield.xhtml">
+						<ui:param name="fieldName" value="login:password" />
+						<ui:define name="label"><h:outputText value="#{msgs['global.form.password']}" /></ui:define>
+						<h:inputSecret id="password" value="#{sessionController.password}" size="10" required="true" />
+					</ui:decorate>
+					<ui:decorate template="/resources/templates/formbutton.xhtml">
+						<h:commandButton action="#{sessionController.login}" value="#{msgs['global.button.login']}" />
+					</ui:decorate>
+				</h:form>
+			</ui:decorate>
+
+			<h:form>
+				<p align="center">Auto-login: 
+					<h:commandLink action="#{sessionController.autoLoginAdmin}" value="Admin" />
+					<h:outputText value=" / " />
+					<h:commandLink action="#{sessionController.autoLoginOperator}" value="Operator" /></p>
+			</h:form>
+		</h:panelGroup>
+
+		<!-- User information, shown when the user is logged in. -->
+		<h:panelGroup rendered="#{sessionController.currentUser != null}">
+			<p><h:outputText value="#{msgs['global.text.identifiedAs']}" />: <strong><h:outputText value="#{sessionController.currentUser.name}" /></strong></p>
+
+			<p><h:outputText value="#{msgs['global.text.instructions']}" /></p>
+
+		</h:panelGroup>
+	</ui:composition>
+</html>

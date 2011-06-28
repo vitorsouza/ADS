@@ -1,0 +1,39 @@
+This is an example project that uses the following technologies:
+
+* IDE: Eclipse Indigo (Java EE version);
+* Application Server: GlassFish 3.1;
+* Java EE 6 stack: JSF 2, JPA 2, CDI, EJB 3.
+
+The system is an Ambulance Dispatch System and it was built with two purposes:
+
+* Experiment with the Java EE 6 stack;
+* Use in a case study for adaptive systems in the context of my PhD research (see publications here: http://disi.unitn.it/~vitorsouza/academia/).
+
+Only parts of the system have been implemented and I have not yet started to pursue the second goal above.
+
+HOW TO RUN:
+==========
+
+Here's a step-by-step on how to deploy and run this application in your machine.
+
+1. Install the following if you don't yet have them installed:
+	* Eclipse Indigo (and also the EGit plug-in and the GlassFish connector);
+	* GlassFish 3.1;
+	* MySQL 5.
+
+2. If not yet done, add GlassFish 3.1 as a server inside Eclipse;
+
+3. Using EGit inside Eclipse, clone the repository and have Eclipse recognize the three projects that are included: ADS, ADSEJB and ADSWeb;
+
+4. Open ADSEJB / ejbModule / META-INF / persistence.xml and uncomment the eclipselink.ddl-generation property for the 1st run;
+
+5. Run the ADS project in the GlassFish server;
+
+6. Open the system in your browser (http://localhost:8080/ADSWeb/) and click in one of the Auto-login links at the bottom of the Home page. The login will not work, but this will trigger JPA to create all the tables of the system. Check in MySQL if that was the case and, if so, comment the property that was uncommented in step 4;
+
+7. Add users directly to the database in the EMPLOYEE table. The auto-login links expect users admin and operator with passwords admin and operator respectivelly. Use the main method in class br.com.engenhodesoftware.util.TextUtils to generate MD5 passwords. Bear in mind that the TYPE column should be 0 = OPERATOR, 1 = DISPATCHER, 2 = DRIVER, 3 = ADMIN;
+
+8. Redeploy the application and try to login. It should work now. 
+
+
+If you have any questions or wish to contribute to this project, please don't hesitate to contact me.

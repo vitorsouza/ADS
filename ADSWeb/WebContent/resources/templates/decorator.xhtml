@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Communication
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20090523
+
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+<h:head>
+	<ui:insert name="head" />
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<link href="#{facesContext.externalContext.requestContextPath}/resources/stylesheets/crud.css" rel="stylesheet" type="text/css" media="screen" />
+	<link href="#{facesContext.externalContext.requestContextPath}/resources/stylesheets/style.css" rel="stylesheet" type="text/css" media="screen" />
+	<link rel="icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/resources/images/favicon.ico" />
+	<title><h:outputText value="#{msgs['global.title.ads']} :: " /><ui:insert name="title" /></title>
+</h:head>
+
+<!-- Global IE fix to avoid layout crash when single word size wider than column width -->
+<!--[if IE]><style type="text/css"> body {word-wrap: break-word;}</style><![endif]-->
+
+<h:body>
+
+<div id="wrapper">
+	<!-- Site header with logo and name. -->
+	<div id="header">
+		<div id="logo">
+			<h1><a href="#{facesContext.externalContext.requestContextPath}/"><h:outputText value="#{msgs['global.title.adsFull']}" /></a></h1>
+			<p><h:outputText value="#{msgs['global.title.cityName']}" /></p>
+		</div>
+	</div>
+
+	<!-- Horizontal menu. -->
+	<h:form>
+	<div id="menu">
+		<ul>
+			<li class="current_page_item"><a href="#{facesContext.externalContext.requestContextPath}/"><h:outputText value="#{msgs['global.menu.home']}" /></a></li>
+
+			<!-- Menu items available for logged in users. -->
+			<h:panelGroup rendered="#{sessionController.currentUser != null}">
+				<!-- Administrator's menu. -->
+				<h:panelGroup rendered="#{sessionController.admin}">
+					<li><h:commandLink value="#{msgs['global.link.manageEmployees']}" action="#{manageEmployeesAction.list}" /></li>
+					<li><h:commandLink value="#{msgs['global.link.manageAmbulances']}" action="#{manageAmbulancesAction.list}" /></li>
+				</h:panelGroup>
+
+				<!-- Dispatcher's menu. -->
+				<h:panelGroup rendered="#{sessionController.dispatcher}">
+					<li><a href="#">Dispatcher Menu</a></li>
+				</h:panelGroup>
+
+				<!-- Driver's menu. -->
+				<h:panelGroup rendered="#{sessionController.driver}">
+					<li><a href="#">Driver Menu</a></li>
+				</h:panelGroup>
+
+				<!-- Operator's menu. -->
+				<h:panelGroup rendered="#{sessionController.operator}">
+					<li><h:commandLink value="#{msgs['global.link.receiveCall']}" action="#{receiveCallAction.begin}" /></li>
+				</h:panelGroup>
+
+				<!-- Log out. -->
+				<li><a href="#{facesContext.externalContext.requestContextPath}/logout"><h:outputText value="#{msgs['global.menu.logout']}" /></a></li>
+			</h:panelGroup>
+		</ul>
+	</div>
+	</h:form>
+
+	<!-- Page body. -->
+	<div id="page"><div id="page-bgtop"><div id="page-bgbtm">
+
+		<!-- Main content. -->
+		<div id="content">
+			<!-- Global messages. -->
+			<div class="globalDialog"><h:messages globalOnly="true" showSummary="true" infoClass="infoDialog" warnClass="warningDialog" errorClass="errorDialog"/></div>
+
+			<!-- The contents of the pages are inserted here. -->
+			<ui:insert name="body" />
+
+			<div style="clear: both;">&nbsp;</div>
+		</div>
+
+		<div style="clear: both;">&nbsp;</div>
+	</div></div></div>
+</div>
+
+<!-- Page footer, copyright information. -->
+<div id="footer">
+	<p><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/it/"><img alt="Creative Commons License" style="border-width:0" src="#{facesContext.externalContext.requestContextPath}/resources/images/cc.png" /></a><br />
+		<h:outputText value="#{msgs['global.text.developedBy']}" /> <a href="http://www.disi.unitn.it/~vitorsouza/">Vítor E. Silva Souza</a> :: <h:outputText value="#{msgs['global.text.publishedUnder']}" /> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/it/"><h:outputText value="#{msgs['global.text.ccLicense']}" /></a> :: <h:outputText value="#{msgs['global.text.designBy']}" /> <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>.</p>
+</div>
+
+</h:body>
+</html>

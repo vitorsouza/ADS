@@ -1,0 +1,129 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/resources/templates/decorator.xhtml">
+
+	<!-- Title section. -->
+	<ui:define name="title"><h:outputText value="#{msgs['manageAmbulances.title']}" /></ui:define>
+
+	<!-- Body section. -->
+	<ui:define name="body">
+		<h1><h:outputText value="#{msgs['manageAmbulances.title']}" /></h1>
+
+		<div class="crud">
+			<!-- Message shown when no entities have been found. -->
+			<h:panelGroup rendered="#{empty manageAmbulancesAction.entities}">
+				<div class="infoDialog"><h:outputText value="#{msgs['manageAmbulances.text.noEntities']}" /></div>
+			</h:panelGroup>
+
+			<!-- The listing: a list with some of the registered entities, shown when there are any. -->
+			<h:panelGroup rendered="#{not empty manageAmbulancesAction.entities}">
+
+				<!-- Filter bar: used to filter the listing (displayed when there is at least one filter available). -->
+				<h:form id="filterForm">
+					<h:panelGroup id="filterBar" rendered="#{(not empty manageAmbulancesAction.filters)}">
+						<div class="crudFilterBar">
+							<h:outputText value="#{messages['manageAmbulances.text.filter']} " />
+							<h:selectOneMenu id="filter" required="true" value="#{manageAmbulancesAction.filterKey}">
+								<f:selectItems value="#{manageAmbulancesAction.filters}" var="filter" itemLabel="#{filter.label}" itemValue="#{filter.key}" />
+								<f:ajax event="change" execute="@form" listener="#{manageAmbulancesAction.changeFilter}" render="@form :listingForm" />
+							</h:selectOneMenu>
+							<h:outputText value=": " />
+							<h:inputText id="filterText" size="20" required="false" value="#{manageAmbulancesAction.filterParam}" rendered="#{manageAmbulancesAction.filter.options == null}" />
+							<h:selectOneMenu id="filterSelect" required="false" value="#{manageAmbulancesAction.filterParam}" rendered="#{manageAmbulancesAction.filter.options != null}">
+								<f:selectItems value="#{manageAmbulancesAction.filter.optionsLabels}" />
+							</h:selectOneMenu>
+							<h:commandLink action="#{manageAmbulancesAction.filter}">
+								<h:graphicImage value="/resources/images/iconFind.png" title="#{messages['manageAmbulances.button.filter']}" />
+								<f:ajax execute="@form" render=":listingForm" />
+							</h:commandLink>
+						</div>
+					</h:panelGroup>
+				</h:form>
+
+
+				<!-- Filter information (displayed when the listing is being filtered. -->
+				<h:form id="listingForm">
+					<h:panelGroup id="filterInfo" rendered="#{manageAmbulancesAction.filtering}">
+						<div class="crudFilterInfo">
+							<h:outputFormat value="#{msgs['manageAmbulances.text.filterInfo']} ">
+								<f:param value="#{manageAmbulancesAction.filter.label}" />
+								<f:param value="#{manageAmbulancesAction.filterLabel}" />
+							</h:outputFormat>
+							<h:commandLink action="#{manageAmbulancesAction.cancelFilter}">
+								<h:graphicImage value="/resources/images/iconClear.png" title="#{msgs['manageAmbulances.button.cancelFilter']}" />
+								<f:ajax execute="@form" render=":listingForm" />
+							</h:commandLink>
+						</div>
+					</h:panelGroup>
+
+					<!-- The list of entities. -->
+					<h:panelGroup id="listing">
+						<h:dataTable value="#{manageAmbulancesAction.entities}" var="entity" styleClass="crudList" rowClasses="odd,even" columnClasses="colSC,colMC,colMC,colMC,colB,colB,colB">
+							<h:column>
+								<f:facet name="header"><h:outputText value="#{msgs['manageAmbulances.form.number']}" /></f:facet>
+								<h:outputText value="#{entity.number}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header"><h:outputText value="#{msgs['manageAmbulances.form.licensePlate']}" /></f:facet>
+								<h:outputText value="#{entity.licensePlate}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header"><h:outputText value="#{msgs['manageAmbulances.text.status']}" /></f:facet>
+								<h:commandLink action="#{manageAmbulancesAction.manageDeactivations(entity.id)}" value="#{manageAmbulancesAction.retrieveCurrentStatus(entity.id)}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header"><h:outputText value="#{msgs['manageAmbulances.text.currentDriver']}" /></f:facet>
+								<h:commandLink action="#{manageAmbulancesAction.manageAssignments(entity.id)}" value="#{manageAmbulancesAction.retrieveCurrentAssignment(entity.id)}" />
+							</h:column>
+							<h:column><h:commandLink action="#{manageAmbulancesAction.retrieve(entity.id)}"><h:graphicImage value="/resources/images/iconRetrieve.png" title="#{msgs['manageAmbulances.button.retrieve']}" /></h:commandLink></h:column>
+							<h:column><h:commandLink action="#{manageAmbulancesAction.update(entity.id)}"><h:graphicImage value="/resources/images/iconUpdate.png" title="#{msgs['manageAmbulances.button.update']}" /></h:commandLink></h:column>
+							<h:column><h:commandLink action="#{manageAmbulancesAction.trash(entity.id)}"><f:ajax render=":trashForm" /><h:graphicImage value="/resources/images/iconTrash.png" title="#{msgs['manageAmbulances.button.delete']}" /></h:commandLink></h:column>
+						</h:dataTable>
+
+						<!-- The navigation panel used to move through the entities as the listing only shows so many instances at a time. -->
+						<h:panelGrid columns="5" id="navigationPanel" styleClass="crudNav">
+							<h:commandLink action="#{manageAmbulancesAction.goFirst}"><f:ajax render="listing" /><h:graphicImage value="/resources/images/iconNavFirst.png" title="#{msgs['manageAmbulances.button.first']}" /></h:commandLink>
+							<h:commandLink action="#{manageAmbulancesAction.goPrevious}"><f:ajax render="listing" /><h:graphicImage value="/resources/images/iconNavPrevious.png" title="#{msgs['manageAmbulances.button.previous']}" /></h:commandLink>
+							<h:outputFormat value="#{msgs['manageAmbulances.text.navigationMessage']}" rendered="#{! manageAmbulancesAction.filtering}"><f:param value="#{manageAmbulancesAction.firstEntityIndex + 1}" /><f:param value="#{manageAmbulancesAction.lastEntityIndex}" /><f:param value="#{manageAmbulancesAction.entityCount}" /></h:outputFormat>
+							<h:outputFormat value="#{msgs['manageAmbulances.text.navigationMessageWithFilter']}" rendered="#{manageAmbulancesAction.filtering}"><f:param value="#{manageAmbulancesAction.firstEntityIndex + 1}" /><f:param value="#{manageAmbulancesAction.lastEntityIndex}" /><f:param value="#{manageAmbulancesAction.entityCount}" /></h:outputFormat>
+							<h:commandLink action="#{manageAmbulancesAction.goNext}"><f:ajax render="listing" /><h:graphicImage value="/resources/images/iconNavNext.png" title="#{msgs['manageAmbulances.button.next']}" /></h:commandLink>
+							<h:commandLink action="#{manageAmbulancesAction.goLast}"><f:ajax render="listing" /><h:graphicImage value="/resources/images/iconNavLast.png" title="#{msgs['manageAmbulances.button.last']}" /></h:commandLink>
+						</h:panelGrid>
+					</h:panelGroup>
+				</h:form>
+
+				<!-- TODO: change this to a better location. Document. -->
+				<h:panelGroup rendered="#{manageAmbulancesAction.filtering and entities.size == 0}">
+					<h:outputText value="#{msgs['manageAmbulances.text.noEntitiesFiltered']}" />
+				</h:panelGroup>
+			</h:panelGroup>
+
+			<!-- Buttons shown below the listing. -->
+			<h:form id="buttonsForm">
+				<div class="crudButtons">
+					<h:commandButton action="#{manageAmbulancesAction.create}" value="#{msgs['manageAmbulances.button.create']}" />
+				</div>
+			</h:form>
+
+			<!-- The trash panel: shows entities that have been selected for deletion. -->
+			<h:form id="trashForm">
+				<h:panelGroup id="trashPanel" rendered="#{not empty manageAmbulancesAction.trashCan}">
+					<div class="crudTrash">
+						<p><h:outputText value="#{msgs['manageAmbulances.text.confirmDeletion']}" /></p>
+						<h:dataTable value="#{manageAmbulancesAction.trashCan}" var="entity" >
+							<h:column><ul><li><h:outputText value="#{entity.name}" /></li></ul></h:column>
+						</h:dataTable>
+						<div class="crudButtons">
+							<h:commandLink action="#{manageAmbulancesAction.cancelDeletion}"><f:ajax render=":trashForm" /><h:graphicImage value="/resources/images/iconCancelDeletion.png" title="#{msgs['manageAmbulances.button.cancelDeletion']}" /></h:commandLink>
+							<h:commandLink action="#{manageAmbulancesAction.delete}"><h:graphicImage value="/resources/images/iconConfirmDeletion.png" title="#{msgs['manageAmbulances.button.confirmDeletion']}" /></h:commandLink>
+						</div>
+					</div>
+				</h:panelGroup>
+			</h:form>
+		</div>
+
+	</ui:define>
+</ui:composition>

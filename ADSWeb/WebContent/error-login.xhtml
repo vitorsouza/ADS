@@ -1,0 +1,16 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/resources/templates/decorator.xhtml">
+
+	<ui:define name="title"><h:outputText value="#{msgs['global.title.welcome']}" /></ui:define>
+
+	<ui:define name="body">
+		<div class="errorDialog"><p><h:outputText value="#{msgs['global.error.login']}" /></p></div>
+
+		<!-- Includes the contents of the index page. -->
+		<ui:include src="index-contents.xhtml" />
+	</ui:define>
+</ui:composition>

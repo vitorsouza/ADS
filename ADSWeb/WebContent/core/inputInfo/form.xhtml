@@ -1,0 +1,40 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/resources/templates/decorator.xhtml">
+
+	<!-- Title section. -->
+	<ui:define name="title"><h:outputText value="#{msgs['receiveCall.title']}" /></ui:define>
+
+	<!-- Body section. -->
+	<ui:define name="body">
+		<h1><h:outputText value="#{msgs['receiveCall.title']}" /></h1>
+
+		<!-- The form. -->
+		<ui:decorate template="/resources/templates/form.xhtml">
+			<h:form id="form">
+				<ui:decorate template="/resources/templates/formfield.xhtml">
+					<ui:param name="fieldName" value="form:description" />
+					<ui:define name="label"><h:outputText value="#{msgs['receiveCall.form.description']}" /></ui:define>
+					<h:inputTextarea id="description" value="#{receiveCallAction.call.description}" cols="60" rows="5" />
+				</ui:decorate>
+				<ui:decorate template="/resources/templates/formfield.xhtml">
+					<ui:param name="fieldName" value="form:address" />
+					<ui:define name="label"><h:outputText value="#{msgs['receiveCall.form.address']}" /></ui:define>
+					<h:inputText id="address" value="#{receiveCallAction.call.address}" size="40" />
+				</ui:decorate>
+				<ui:decorate template="/resources/templates/formfield.xhtml">
+					<ui:param name="fieldName" value="form:callerInfo" />
+					<ui:define name="label"><h:outputText value="#{msgs['receiveCall.form.callerInfo']}" /></ui:define>
+					<h:inputText id="callerInfo" value="#{receiveCallAction.call.callerInfo}" size="40" />
+				</ui:decorate>
+				<ui:decorate template="/resources/templates/formbutton.xhtml">
+					<h:commandButton action="#{receiveCallAction.inputInfo}" value="#{msgs['receiveCall.button.inputInfo']}" />
+				</ui:decorate>
+			</h:form>
+		</ui:decorate>
+
+	</ui:define>
+</ui:composition>

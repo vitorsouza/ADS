@@ -1,0 +1,71 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/resources/templates/decorator.xhtml">
+
+	<!-- Title section. -->
+	<ui:define name="title">
+		<h:outputText value="#{msgs['manageEmployees.title.create']}" rendered="#{(! manageEmployeesAction.readOnly) and (manageEmployeesAction.selectedEntity.id == null)}" />
+		<h:outputText value="#{msgs['manageEmployees.title.update']}" rendered="#{(! manageEmployeesAction.readOnly) and (manageEmployeesAction.selectedEntity.id != null)}" />
+		<h:outputText value="#{msgs['manageEmployees.title.retrieve']}" rendered="#{manageEmployeesAction.readOnly}" />
+	</ui:define>
+
+	<!-- Body section. -->
+	<ui:define name="body">
+		<h1>
+			<h:outputText value="#{msgs['manageEmployees.title.create']}" rendered="#{(! manageEmployeesAction.readOnly) and (manageEmployeesAction.selectedEntity.id == null)}" />
+			<h:outputText value="#{msgs['manageEmployees.title.update']}" rendered="#{(! manageEmployeesAction.readOnly) and (manageEmployeesAction.selectedEntity.id != null)}" />
+			<h:outputText value="#{msgs['manageEmployees.title.retrieve']}" rendered="#{manageEmployeesAction.readOnly}" />
+		</h1>
+
+		<ui:decorate template="/resources/templates/form.xhtml">
+			<h:form id="form">
+				<h:panelGroup id="nameField">
+					<ui:decorate template="/resources/templates/formfield.xhtml">
+						<ui:param name="fieldName" value="form:name" />
+						<ui:define name="label"><h:outputText value="#{msgs['manageEmployees.form.name']}" /></ui:define>
+						<h:inputText id="name" value="#{manageEmployeesAction.selectedEntity.name}" size="30" required="true" disabled="#{manageEmployeesAction.readOnly}">
+							<f:ajax event="blur" render="nameField" />
+						</h:inputText>
+					</ui:decorate>
+				</h:panelGroup>
+				<h:panelGroup id="usernameField">
+					<ui:decorate template="/resources/templates/formfield.xhtml">
+						<ui:param name="fieldName" value="form:username" />
+						<ui:define name="label"><h:outputText value="#{msgs['manageEmployees.form.username']}" /></ui:define>
+						<h:inputText id="username" value="#{manageEmployeesAction.selectedEntity.login}" size="15" required="true" disabled="#{manageEmployeesAction.readOnly}">
+							<f:ajax event="blur" render="usernameField" />
+						</h:inputText>
+					</ui:decorate>
+				</h:panelGroup>
+				<h:panelGroup id="passwordField">
+					<ui:decorate template="/resources/templates/formfield.xhtml">
+						<ui:param name="fieldName" value="form:password" />
+						<ui:define name="label"><h:outputText value="#{msgs['manageEmployees.form.password']}" /></ui:define>
+						<h:inputSecret id="password" value="#{manageEmployeesAction.newPassword}" size="15" required="#{manageEmployeesAction.selectedEntity.id == null}" disabled="#{manageEmployeesAction.readOnly}" />
+					</ui:decorate>
+				</h:panelGroup>
+				<ui:decorate id="typeField" template="/resources/templates/formfield.xhtml">
+					<ui:param name="fieldName" value="form:type" />
+					<ui:define name="label"><h:outputText value="#{msgs['manageEmployees.form.type']}" /></ui:define>
+					<h:selectOneRadio id="type" value="#{manageEmployeesAction.selectedEntity.type}" required="true" disabled="#{manageEmployeesAction.readOnly}">
+						<f:selectItems value="#{manageEmployeesAction.types}" />
+					</h:selectOneRadio>
+				</ui:decorate>
+
+				<ui:decorate template="/resources/templates/formbutton.xhtml">
+					<h:panelGroup rendered="#{! manageEmployeesAction.readOnly}">
+						<h:commandButton action="#{manageEmployeesAction.list}" value="#{msgs['manageEmployees.button.cancel']}" immediate="true" />
+						<h:commandButton action="#{manageEmployeesAction.save}" value="#{msgs['manageEmployees.button.save']}" />
+					</h:panelGroup>
+					<h:panelGroup rendered="#{manageEmployeesAction.readOnly}">
+						<h:commandButton action="#{manageEmployeesAction.list}" value="#{msgs['manageEmployees.button.back']}" immediate="true" />
+					</h:panelGroup>
+				</ui:decorate>
+			</h:form>
+		</ui:decorate>
+
+	</ui:define>
+</ui:composition>
